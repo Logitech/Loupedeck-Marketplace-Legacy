@@ -1,0 +1,2998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loupedeck Legacy Marketplace</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #18161B;
+      color: #F0F0F0;
+      min-height: 100vh;
+    }
+    header {
+      background: #29282A;
+      border-bottom: 1px solid #4A484B;
+      padding: 24px 32px;
+    }
+    header h1 { font-size: 1.6rem; color: #F0F0F0; }
+    header p { color: #9E9CA0; margin-top: 6px; font-size: 0.9rem; }
+    .toolbar {
+      padding: 20px 32px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .toolbar input {
+      background: #383739;
+      border: 2px solid #4A484B;
+      color: #F0F0F0;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: 260px;
+    }
+    .toolbar input:focus { outline: none; border-color: #BEA1FE; }
+    .filter-btn {
+      background: #333234;
+      border: 1px solid #4A484B;
+      color: #9E9CA0;
+      padding: 7px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .filter-btn:focus-visible { outline: 2px solid #BEA1FE; outline-offset: 2px; }
+    .filter-btn.active { background: #7F32BA; border-color: #7F32BA; color: #F0F0F0; }
+    .count { color: #848287; font-size: 0.85rem; margin-left: auto; }
+    .section { padding: 0 32px 32px; }
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #848287;
+      margin-bottom: 16px;
+      padding-top: 24px;
+      border-top: 1px solid #333234;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: #333234;
+      border: 1px solid #4A484B;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-title { font-size: 1rem; font-weight: 600; color: #F0F0F0; }
+    .card-author { font-size: 0.8rem; color: #848287; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .badge-win  { background: #1a3a5c; color: #60a5fa; }
+    .badge-mac  { background: #1a3a2e; color: #4ade80; }
+    .badge-type { background: #40195D; color: #BEA1FE; }
+    .badge-ver    { background: #29282A; color: #9E9CA0; }
+    .badge-device { background: #1a2e1a; color: #6ee7b7; }
+    .short-desc { font-size: 0.85rem; color: #9E9CA0; line-height: 1.5; }
+    .desc-toggle {
+      font-size: 0.8rem;
+      color: #BEA1FE;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
+    }
+    .desc-toggle:hover { text-decoration: underline; }
+    .desc-toggle:focus-visible { outline: 2px solid #BEA1FE; outline-offset: 2px; }
+    .full-desc {
+      display: none;
+      font-size: 0.82rem;
+      color: #F0F0F0;
+      line-height: 1.65;
+      border-top: 1px solid #4A484B;
+      padding-top: 12px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .full-desc.open { display: block; }
+    .full-desc h1, .full-desc h2, .full-desc h3 {
+      color: #F0F0F0; font-size: 0.9rem; margin: 10px 0 4px;
+    }
+    .full-desc p { margin-bottom: 8px; }
+    .full-desc ul, .full-desc ol { padding-left: 18px; margin-bottom: 8px; }
+    .full-desc code {
+      background: #18161B; padding: 1px 5px; border-radius: 3px;
+      font-size: 0.8rem;
+    }
+    .full-desc a { color: #BEA1FE; text-decoration: underline; }
+    .card-footer { margin-top: auto; display: flex; gap: 10px; align-items: center; }
+    .dl-btn {
+      background: #7F32BA;
+      color: #F0F0F0;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .dl-btn:hover { background: #40195D; }
+    .dl-btn:focus-visible { outline: 2px solid #BEA1FE; outline-offset: 2px; }
+    .dl-btn.no-file { background: #424144; color: #848287; cursor: default; }
+    .support-link { font-size: 0.78rem; color: #848287; }
+    .support-link a { color: #BEA1FE; text-decoration: underline; }
+    .support-link a:hover { color: #974ED0; }
+    .hidden { display: none !important; }
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: #666468;
+      font-size: 0.8rem;
+      border-top: 1px solid #4A484B;
+    }
+    footer a { color: #BEA1FE; text-decoration: underline; }
+    footer a:hover { color: #974ED0; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Loupedeck Legacy Marketplace</h1>
+  <p>Archive of plugins, profiles and content packs for Loupedeck v5.8 or older desktop software.</p>
+</header>
+
+<div class="toolbar">
+  <input type="search" id="search" placeholder="Search packages..." oninput="filterCards()" />
+  <button class="filter-btn active" data-type="all" onclick="setFilter('all', this)">All</button>
+  <button class="filter-btn" data-type="2" onclick="setFilter('2', this)">Plugin</button>
+  <button class="filter-btn" data-type="1" onclick="setFilter('1', this)">Profile</button>
+  <button class="filter-btn" data-type="4" onclick="setFilter('4', this)">Icon Library</button>
+  
+  <span class="count" id="count"></span>
+</div>
+
+<div id="content">
+
+  <div class="section" data-section-type="2">
+    <div class="section-title">Plugin (54)</div>
+    <div class="grid">
+      
+    <div class="card" data-type="2" data-search="audio control insidegen plugin control windows audio from your loupedeck.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Audio Control</div>
+          <div class="card-author">insideGen</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-win">Windows</span></div>
+      <div class="short-desc">Control Windows audio from your Loupedeck.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-407')">Show description ▼</button>
+        <div class="full-desc" id="desc-407">
+          <script>document.getElementById('desc-407').innerHTML = marked.parse(`This plugin allows you to adjust and mute the volume of render and capture devices and display peak meter on each. As well as audio applications.
+
+It also allows you to set default communication and multimedia devices and input/output devices for each application.
+
+More information on Github [Loupedeck-AudioControl-OpenPlugin](https://github.com/insideGen/Loupedeck-AudioControl-OpenPlugin).`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AudioControl.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="awtrix 3 blueforcer plugin offical awtrix 3 plugin
+">
+      <div class="card-header">
+        <div>
+          <div class="card-title">AWTRIX 3</div>
+          <div class="card-author">Blueforcer</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span></div>
+      <div class="short-desc">Offical AWTRIX 3 Plugin
+</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-408')">Show description ▼</button>
+        <div class="full-desc" id="desc-408">
+          <script>document.getElementById('desc-408').innerHTML = marked.parse(`Features:
+- Send custom notifications to your AWTRIX with just a fingertip.
+- Switch between apps
+- Control brightness
+- Mirror the AWTRIX matrix to 4 loupdeck buttons`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Awtrix3.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="aximmetry aximmetry technologies plugin change cameras, adjust any property, or select any control board button of your aximmetry scene from loupedeck.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Aximmetry</div>
+          <div class="card-author">Aximmetry Technologies</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Change cameras, adjust any property, or select any control board button of your Aximmetry scene from Loupedeck.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-378')">Show description ▼</button>
+        <div class="full-desc" id="desc-378">
+          <script>document.getElementById('desc-378').innerHTML = marked.parse(`Provides integration with the controller system of Aximmetry.
+
+**Allows controlling**
+
+- camera and camera path changes
+- any properties of your Flow Graph
+- any control board buttons of your scene.
+
+**Two-way communication**: gives visual feedback on the Loupedeck device of
+
+- the current state of your buttons
+- the current value of your properties if assigned to a dial
+
+even if you change them from within Aximmetry.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Aximmetry.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="birddogcamcontrol birddog plugin the birddog loupedeck plugin is the perfect solution for professionals in the streaming and broadcasting industry.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">BirdDogCamControl</div>
+          <div class="card-author">BirdDog</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">The BirdDog Loupedeck plugin is the perfect solution for professionals in the streaming and broadcasting industry.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-344')">Show description ▼</button>
+        <div class="full-desc" id="desc-344">
+          <script>document.getElementById('desc-344').innerHTML = marked.parse(`The BirdDog Loupedeck plugin is designed for professionals in the streaming and broadcasting industry who want to take their livestreaming to the next level. With the plugin, you can control your BirdDog PTZ cameras directly from the Loupedeck app, giving you full control over pan, tilt, and zoom. This allows you to easily capture different angles and perspectives during your livestream, making your video more dynamic and engaging.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/BirdDogCamControl.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="btcvalue zooooop plugin cryptotracker for loupedeck: track cryptos (eth, btc, doge+) in real-time at your fingertips.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">BtcValue</div>
+          <div class="card-author">zooooop</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">CryptoTracker for Loupedeck: Track cryptos (ETH, BTC, DOGE+) in real-time at your fingertips.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-356')">Show description ▼</button>
+        <div class="full-desc" id="desc-356">
+          <script>document.getElementById('desc-356').innerHTML = marked.parse(`The CryptoTracker Plugin for Loupedeck is a powerful and convenient addition to your Loupedeck console, enabling you to keep track of popular cryptocurrency values such as Ethereum (ETH), Bitcoin (BTC), Dogecoin (DOGE), and more, all at your fingertips. This plugin provides an easy-to-read display of real-time market values, updating automatically every 30 seconds or with a simple click.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/BtcValue.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="bzbgear bzbgear plugin the bzbgear plugin works with bzbgear ptz cameras. it provides access to pan, tilt, zoom, focus, and preset controls.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">BZBGEAR</div>
+          <div class="card-author">BZBGEAR</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.1.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">The BZBGEAR plugin works with BZBGEAR PTZ Cameras. It provides access to pan, tilt, zoom, focus, and preset controls.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/BZBGEAR.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="chromecast nicolai roovers plugin cast online media and control your chromecast">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Chromecast</div>
+          <div class="card-author">Nicolai Roovers</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Cast online media and control your chromecast</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-346')">Show description ▼</button>
+        <div class="full-desc" id="desc-346">
+          <script>document.getElementById('desc-346').innerHTML = marked.parse(`This plugin allows you to cast online media to your chromecast. You will be able to control your device by playing/pausing media, stopping a cast and controlling the volume.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Chromecast.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="companion oddbear plugin plugin for using bitfocus companion with the loupedeck through the companion plugin api.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Companion</div>
+          <div class="card-author">oddbear</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.2.6</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Plugin for using Bitfocus Companion with the Loupedeck through the Companion Plugin API.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-298')">Show description ▼</button>
+        <div class="full-desc" id="desc-298">
+          <script>document.getElementById('desc-298').innerHTML = marked.parse(`Plugin for using Bitfocus Companion with the Loupedeck through the Companion Plugin API.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Companion.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="coreldraw corel plugin your new shortcut to brillance –  speed up your workflows in coreldraw massively with this new plugin.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">CorelDRAW</div>
+          <div class="card-author">COREL</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Your new shortcut to brillance –  speed up your workflows in CorelDRAW massively with this new plugin.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-363')">Show description ▼</button>
+        <div class="full-desc" id="desc-363">
+          <script>document.getElementById('desc-363').innerHTML = marked.parse(`Your new shortcut to brillance –  speed up your workflows in CorelDRAW massively with this new plugin. The set of about 80 functions allows you, for example, to change colours on the fly, align, zoom, scale or move objects just with a touch of a fingertip.
+
+
+Main functions:
+
+•	Align objects 
+•	Space objects 
+•	Rotate objects
+•	Zoom in and out 
+•	Move selected objects
+•	Group and ungroup 
+•	Various options for colour selection and changes
+•	And much more…`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CorelDraw.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="dmx controller alexandre saillet plugin control your dmx devices directly on your loupedeck.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">DMX Controller</div>
+          <div class="card-author">Alexandre Saillet</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span></div>
+      <div class="short-desc">Control your DMX devices directly on your Loupedeck.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Dmx.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="goxlr oddbear plugin plugin for the goxlr to change profiles or set the routing states.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">GoXLR</div>
+          <div class="card-author">oddbear</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Plugin for the GoXLR to change profiles or set the routing states.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Loupedeck.GoXLR.Plugin.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="hazeover distraction dimmer maxim ananov plugin control hazeover dimming using loupedeck to reduce screen clutter and distractions with a turn of a knob.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">HazeOver Distraction Dimmer</div>
+          <div class="card-author">Maxim Ananov</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Control HazeOver dimming using Loupedeck to reduce screen clutter and distractions with a turn of a knob.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/HazeOver.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="hellold rmaniraj plugin teaser description">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Hellold</div>
+          <div class="card-author">rmaniraj</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">teaser description</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-406')">Show description ▼</button>
+        <div class="full-desc" id="desc-406">
+          <script>document.getElementById('desc-406').innerHTML = marked.parse(`Detail page description `);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Hellold.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="home assistant websocket schmic plugin the plugin communicates via the websocket api of home-assistant.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Home Assistant Websocket</div>
+          <div class="card-author">schmic</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.7</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">The plugin communicates via the Websocket API of Home-Assistant.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-394')">Show description ▼</button>
+        <div class="full-desc" id="desc-394">
+          <script>document.getElementById('desc-394').innerHTML = marked.parse(`This plugin enables you to control various [Home-Assitant](https://home-assistant.io) entities with your Loupedeck.
+
+Supported entities:
+- Automations
+- Buttons
+- Climate
+- Cover
+- Dimmers (lights with \`brightness\` attribute)
+- Lights
+- Locks
+- Scene
+- Script
+- Sensor
+- Switches
+- Water Heater
+
+The plugin communicates via the [Websocket API](https://developers.home-assistant.io/docs/api/websocket/) of Home-Assistant. State changes are immediately reflect on your Loupedeck display.
+
+`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Ha.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="ifttt webhooks dominik werland plugin trigger your ifttt webhooks directly from your loupedeck">
+      <div class="card-header">
+        <div>
+          <div class="card-title">IFTTT Webhooks</div>
+          <div class="card-author">Dominik Werland</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Trigger your IFTTT Webhooks directly from your Loupedeck</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Ifttt.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="kg_rstudio masaki fujishima plugin contains 200 keyboard shortcuts for rstudio version 1.4.1103. i hope this makes your analysis a little easier !!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">KG_RStudio</div>
+          <div class="card-author">Masaki Fujishima</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span></div>
+      <div class="short-desc">Contains 200 keyboard shortcuts for RStudio Version 1.4.1103. I hope this makes your analysis a little easier !!</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-361')">Show description ▼</button>
+        <div class="full-desc" id="desc-361">
+          <script>document.getElementById('desc-361').innerHTML = marked.parse(`Overview: RStudio helps everyone who uses RStudio to focus on analysis by reducing keystrokes.
+Key features: Contains 200 keyboard shortcuts for RStudio Version 1.4.1103.
+Support: https://www.karada-good.net/analyticsr/r-774/
+e-mail: info@karada-good.net`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/KgRstudio.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="libre hardware monitor notadoctor99 plugin shows the basic pc hardware parameters (cpu and gpu temperature, cpu, gpu and memory load, cpu power consumption, etc.)">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Libre Hardware Monitor</div>
+          <div class="card-author">NotADoctor99</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Shows the basic PC hardware parameters (CPU and GPU temperature, CPU, GPU and memory load, CPU power consumption, etc.)</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-350')">Show description ▼</button>
+        <div class="full-desc" id="desc-350">
+          <script>document.getElementById('desc-350').innerHTML = marked.parse(`Shows the basic PC hardware parameters (CPU and GPU temperature, CPU, GPU and memory load, CPU power consumption, etc.) using data provided by Libre Hardware Monitor application.
+`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LibreHardwareMonitor.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="loupedeck ai assistant loupedeck plugin boost your workflow with ai assistant, a plugin leveraging openai gpt technology!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Loupedeck AI Assistant</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.2.3</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Boost your workflow with AI Assistant, a plugin leveraging OpenAI GPT technology!</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-355')">Show description ▼</button>
+        <div class="full-desc" id="desc-355">
+          <script>document.getElementById('desc-355').innerHTML = marked.parse(`**Loupedeck AI Assistant**: A powerful plugin combining OpenAI & Loupedeck software for *enhanced productivity*. Access the AI Assistant instantly via your Loupedeck device for:
+- Prompts
+- Answers
+- Text analysis
+Sample prompts include conversation starters, vocabulary, and code snippets.
+
+⚠️ **Caution**: AI may produce inaccurate, harmful, or biased content. Use at your own risk.
+`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AiAssistant.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="lumiastream lumia stream plugin control lumia stream from your loupedeck with pre-made shortcuts ready to use!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">LumiaStream</div>
+          <div class="card-author">Lumia Stream</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.2</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Control Lumia Stream from your Loupedeck with pre-made shortcuts ready to use!</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-341')">Show description ▼</button>
+        <div class="full-desc" id="desc-341">
+          <script>document.getElementById('desc-341').innerHTML = marked.parse(`Control Lumia Stream from your Loupedeck with pre-made shortcuts ready to use. With the powerful tools that Lumia Stream offers, streamers can change the colors of their lights, send Midi and OSC commands, Text-To-Speech, as well as set up custom animations, patterns, and scenes based on viewer engagement and actions.
+
+With a wide array of colors to choose from, our goal is to close the gap between content creators and their community`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LumiaStream.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="microsoft flight simulator calibx plugin plugin to control microsoft flight simulator 2020">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Microsoft Flight Simulator</div>
+          <div class="card-author">CaliBx</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v2.4.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Plugin to control Microsoft Flight Simulator 2020</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MSFS.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="microsoft teams martijn smit plugin control of your microsoft teams meetings with loupedeck. mute, camera toggle, blur background, reactions and more!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Microsoft Teams</div>
+          <div class="card-author">Martijn Smit</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Control of your Microsoft Teams meetings with Loupedeck. Mute, camera toggle, blur background, reactions and more!</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-352')">Show description ▼</button>
+        <div class="full-desc" id="desc-352">
+          <script>document.getElementById('desc-352').innerHTML = marked.parse(`This Microsoft Teams plugin is designed to give you extensive control over your Microsoft Teams meetings. You can easily mute and unmute yourself when you want to speak, toggle your camera on and off, and blur your background to conceal any visual distractions.
+
+Leave meetings quickly, raise hand, and send reactions (applause 👏, laugh 😂, like 👍, love ❤️, and wow 😲). 
+
+Looking for Zoom, Google Meet, or Webex? Try the [MuteDeck plugin](https://marketplace.loupedeck.com/asset/MuteDeck).`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MicrosoftTeams.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="mix it up blazing cacti llc plugin mix it up: a top-tier stream bot with versatile tools for audience interaction, developed by a dedicated team of experts">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Mix It Up</div>
+          <div class="card-author">Blazing Cacti LLC</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.3</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Mix It Up: A top-tier stream bot with versatile tools for audience interaction, developed by a dedicated team of experts</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-349')">Show description ▼</button>
+        <div class="full-desc" id="desc-349">
+          <script>document.getElementById('desc-349').innerHTML = marked.parse(`Mix It Up is a feature-packed stream bot that offers versatile tools to enhance your stream. Our community-driven approach makes us a comprehensive stream bot.
+
+We support Twitch, Trovo, any YouTube with a user-friendly interface for creating appealing and interactive streams.
+
+Open-source and transparent data practices ensure your data is safe. Add custom commands, chat games, and interactive features. Try it out and discover why we're the go-to stream bot for streamers worldwide.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MixItUp.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="mutedeck for zoom martijn smit plugin reduce meeting stress and mistakes. never hear &amp;quot;hey, you're on mute&amp;quot; again.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">MuteDeck for Zoom</div>
+          <div class="card-author">Martijn Smit</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v6.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Reduce meeting stress and mistakes. Never hear &quot;hey, you're on mute&quot; again.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-123')">Show description ▼</button>
+        <div class="full-desc" id="desc-123">
+          <script>document.getElementById('desc-123').innerHTML = marked.parse(`Take control of your meetings with [MuteDeck](https://mutedeck.com). Check and control your status on Zoom, Microsoft Teams, Google Meet, or Cisco Webex; quickly mute or unmute, toggle your webcam, start sharing, leave the meeting, and more. You can even define custom actions!
+
+MuteDeck runs on Windows, macOS, and detects the status of conference call software. Currently, Zoom, Teams, Google Meet, and Webex are supported (with more to come). However! If MuteDeck does not recognize your conference call software, it controls the system mute. That means you can use it for any and all types of software! 🤯
+
+After installing this plugin, get the MuteDeck application from [mutedeck.com/downloads](https://mutedeck.com/downloads)
+
+**What's New Version 5.0** (2023-06-07)
+New action: Bring to Front, which will bring the Zoom, Teams, and others, to the front of your desktop, making them easier to find when you have a lot of apps open.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MuteDeck.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="nanoleaf control xeroxdev plugin  this loupedeck plugin allows you to control your nanoleaf devices!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Nanoleaf Control</div>
+          <div class="card-author">XeroxDev</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v3.0.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc"> This Loupedeck Plugin allows you to control your Nanoleaf devices!</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-106')">Show description ▼</button>
+        <div class="full-desc" id="desc-106">
+          <script>document.getElementById('desc-106').innerHTML = marked.parse(`**What is this Plugin?**
+This Loupedeck Plugin allows you to control your Nanoleaf devices!
+
+**How to use it?**
+
+1. Install the Plugin
+2. Add the "Authenticate" button to the Loupedeck
+3. Press the "Authenticate" button and follow the instructions
+4. When authenticated, add the other actions and have fun!
+
+**Support channels**
+[GitHub](https://github.com/XeroxDev/Loupedeck-plugin-NanoleafControl/issues/new/choose) - [Discord](https://s.tswi.me/discord)`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/NanoleafControl.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="obs studio loupedeck plugin obs plugin update">
+      <div class="card-header">
+        <div>
+          <div class="card-title">OBS Studio</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v5.6.0.20001</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">OBS PLUGIN UPDATE</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-335')">Show description ▼</button>
+        <div class="full-desc" id="desc-335">
+          <script>document.getElementById('desc-335').innerHTML = marked.parse(`*OBS Plugin hotfix*. Fixes a bug causing scenes and sources selection to show wrong states on the device (selection itself was working)`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ObsStudio.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="pihole dominik werland plugin disable and enable blocking and display various stats">
+      <div class="card-header">
+        <div>
+          <div class="card-title">PiHole</div>
+          <div class="card-author">Dominik Werland</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.3.2</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Disable and enable blocking and display various stats</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-339')">Show description ▼</button>
+        <div class="full-desc" id="desc-339">
+          <script>document.getElementById('desc-339').innerHTML = marked.parse(`Plugin for Pihole that lets you disable and enable blocking as well as display various statistics from your Pihole instance.
+
+**Features:**
+- Disable (indefinitely, 10s, 30s, 5m)
+- Enable
+- Display stats (16 different values)
+- Visual representation if blocking is disabled or enabled
+
+If you have any issues with the plugin or feature requests, get in touch on [Github](https://github.com/shells-dw/loupedeck-pihole)`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/PiHole.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="pixera av stumpfl gmbh  (benni m.) plugin this plugin allows you to remote pixera and all modules inside of pixera control.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Pixera</div>
+          <div class="card-author">AV Stumpfl GmbH  (Benni M.)</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">This Plugin allows you to Remote Pixera and all Modules inside of Pixera Control.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Pixera_1_0_0.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="power toys oddbear plugin plugin for controlling microsoft powertoys.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Power Toys</div>
+          <div class="card-author">oddbear</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.4</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Plugin for controlling Microsoft PowerToys.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-132')">Show description ▼</button>
+        <div class="full-desc" id="desc-132">
+          <script>document.getElementById('desc-132').innerHTML = marked.parse(`Plugin for controlling Microsoft PowerToys.
+
+Uses the configured shortcuts so you don't have to remember them, and shows the tools status when possible.
+
+Updated for PowerToys v0.69.1.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/PowerToys.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="presonus revelator oddbear plugin plugin for controlling the presonus revelator interfaces, supports routing, volume, presets and toggles of headphones and fatchannel.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">PreSonus Revelator</div>
+          <div class="card-author">oddbear</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Plugin for controlling the PreSonus Revelator interfaces, supports routing, volume, presets and toggles of headphones and fatchannel.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/multi.rev5.Revelator.io24.Loupedeck.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="razer audio mixer razer inc. plugin allows you to control your razer audio mixer and adjust settings found in synapse">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Razer Audio Mixer</div>
+          <div class="card-author">Razer Inc.</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Allows you to control your Razer Audio Mixer and adjust settings found in Synapse</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-336')">Show description ▼</button>
+        <div class="full-desc" id="desc-336">
+          <script>document.getElementById('desc-336').innerHTML = marked.parse(`This plugin allows you to take control of your Razer Audio Mixer to adjust settings like mic gain, channel volume, and chroma effects.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AudioMixer.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="razer key light chroma razer inc. plugin this plugin allows you to take control of your razer key light chroma to adjust the settings.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Razer Key Light Chroma</div>
+          <div class="card-author">Razer Inc.</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1.2</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">This plugin allows you to take control of your Razer Key Light Chroma to adjust the settings.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/KeylightChromaControl.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="razer kiyo pro ultra razer inc. plugin allows you to control your razer kiyo pro ultra and adjust settings found in synapse">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Razer Kiyo Pro Ultra</div>
+          <div class="card-author">Razer Inc.</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0.16</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Allows you to control your Razer Kiyo Pro Ultra and adjust settings found in Synapse</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-405')">Show description ▼</button>
+        <div class="full-desc" id="desc-405">
+          <script>document.getElementById('desc-405').innerHTML = marked.parse(`This plugin allows you to take control of your Razer Kiyo Pro Ultra and adjust settings such as ISO/Exposure and other settings found in Synapse`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/KiyoProUltra.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="razer synapse control razer inc. plugin this plugin allows you to take control of a range of razer peripherals.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Razer Synapse Control</div>
+          <div class="card-author">Razer Inc.</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">This plugin allows you to take control of a range of Razer Peripherals.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-365')">Show description ▼</button>
+        <div class="full-desc" id="desc-365">
+          <script>document.getElementById('desc-365').innerHTML = marked.parse(`This plugin allows you to take control of a range of Razer Peripherals.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SynapseControl.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="soundcontroller zer0deck plugin this loupedeck plugin allows you to control the the volume of individual applications in windows.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">SoundController</div>
+          <div class="card-author">zer0deck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">This Loupedeck Plugin allows you to control the the volume of individual applications in Windows.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-387')">Show description ▼</button>
+        <div class="full-desc" id="desc-387">
+          <script>document.getElementById('desc-387').innerHTML = marked.parse(`This plugin uses the freeware utility [SoundVolumeCommandLine](https://www.nirsoft.net/utils/sound_volume_command_line.html) by launching hidden command line instances. This allows you to control the sound of individual applications or processes in the Windows 8, 10 or 11 operating system:
+1. This plugin contains several **pre-installed adjustment wheels** to control various applications:
+    - Discord
+    - Google Chrome
+    - VLC and etc.
+2. Or you can create **your own custom wheels**.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SoundController.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="speedtest xeroxdev plugin this plugin allows you to the test your internet connection. it shows ping, download and upload speed.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Speedtest</div>
+          <div class="card-author">XeroxDev</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">This Plugin allows you to the test your internet connection. It shows ping, download and upload speed.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SpeedtestPlugin.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="spotify premium loupedeck plugin plugin for controlling spotify premium.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Spotify Premium</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v5.3</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Plugin for controlling Spotify Premium.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-380')">Show description ▼</button>
+        <div class="full-desc" id="desc-380">
+          <script>document.getElementById('desc-380').innerHTML = marked.parse(`Take control of your Spotify Premium with this plugin. Includes actions to:
+- Play/Pause Songs
+- Control Volume
+- Playlist controls
+- Change playback states
+
+Please note that this plugin works with Spotify Premium Only. `);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Spotify.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="streamer.bot xeroxdev plugin with this plugin you can execute actions on your streamer.bot application.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Streamer.bot</div>
+          <div class="card-author">XeroxDev</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.2</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">With this plugin you can execute actions on your Streamer.bot application.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/StreamerBotPlugin-1.0.2.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="streamlabs desktop streamlabs plugin control streamlabs desktop. this updated plugin features all necessary streamlabs desktop actions for easy streaming.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Streamlabs Desktop</div>
+          <div class="card-author">Streamlabs</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v2.0.2</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Control Streamlabs Desktop. This updated plugin features all necessary Streamlabs Desktop actions for easy streaming.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-383')">Show description ▼</button>
+        <div class="full-desc" id="desc-383">
+          <script>document.getElementById('desc-383').innerHTML = marked.parse(`Control Streamlabs Desktop. This updated plugin features all necessary Streamlabs Desktop actions for easy streaming with new updated icons and automatically retrieved scenes and sources.
+
+**Key Features:**
+- Intuitive Setup
+- Command Control
+- Real-time Stream Status
+- Precision Audio Control
+
+**Note:** Streamlabs must be running for the dynamic content to be retrieved correctly.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Streamlabs.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="streamtimer controller ghostlytuna plugin a controller for the streamtimer.io stream timer! subathons, trains and other useful tools for live streamers.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">StreamTimer Controller</div>
+          <div class="card-author">GhostlyTuna</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">A controller for the Streamtimer.io stream timer! Subathons, trains and other useful tools for live streamers.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/StreamTimer.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="teamspeak3 dominik werland plugin control your teamspeak 3 client from your loupedeck!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Teamspeak3</div>
+          <div class="card-author">Dominik Werland</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Control your Teamspeak 3 client from your Loupedeck!</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-362')">Show description ▼</button>
+        <div class="full-desc" id="desc-362">
+          <script>document.getElementById('desc-362').innerHTML = marked.parse(`Control your Teamspeak 3 Client from Loupedeck!
+
+**NOTE: Teamspeak and the plugin need to be set up for it to work! Follow the [Setup instructions](https://github.com/shells-dw/loupedeck-teamspeak3#setup)!**
+
+**Features:**
+- Mute/unmute
+- Connect/disconnect
+- Set Away
+- Set (custom) Away messages
+- Move into channels
+- Teamspeak is mirrored, so if you mute/unmute through a hotkey, the icon on the Loupedeck will reflect that change
+- Localized to EN, DE, FR`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Teamspeak3.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="text template plugin steinerd.com plugin this plugin allows clever text send-macro templates that dynamically read other files for its replacements.
+
+">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Text Template Plugin</div>
+          <div class="card-author">Steinerd.com</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">This plugin allows clever text send-macro templates that dynamically read other files for its replacements.
+
+</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/TextTemplate.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="totalmix dominik werland plugin this plugin lets you control rme's audio interfaces that support the totalmix fx control application from your loupedeck">
+      <div class="card-header">
+        <div>
+          <div class="card-title">TotalMix</div>
+          <div class="card-author">Dominik Werland</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.8.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">This plugin lets you control RME's audio interfaces that support the TotalMix FX control application from your Loupedeck</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/TotalMix.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="twitch loupedeck plugin control your twitch channel directly from your loupedeck console.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Twitch</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v5.8.1.10004</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Control your Twitch channel directly from your Loupedeck console.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-353')">Show description ▼</button>
+        <div class="full-desc" id="desc-353">
+          <script>document.getElementById('desc-353').innerHTML = marked.parse(`The Twitch plugin is designed to give you easy control over your chat and manage your Twitch stream. This does not only include basic functionality like “Follower Mode” or “Subscriber Mode”, but also allows you to create Twitch Clips and Twitch Markers on the fly or run commercials directly through your LoupeDeck.
+
+This version fixes minor bugs and connectivity issues.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Twitch.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="twitch studio twitch plugin a useful set of actions for managing your stream in twitch studio.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Twitch Studio</div>
+          <div class="card-author">Twitch</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">A useful set of actions for managing your stream in Twitch Studio.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/TwitchStudio.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="vlc media player ihor kotvytskyi plugin plugin for remote control of vlc media player.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">VLC media player</div>
+          <div class="card-author">Ihor Kotvytskyi</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.3.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Plugin for remote control of VLC media player.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-248')">Show description ▼</button>
+        <div class="full-desc" id="desc-248">
+          <script>document.getElementById('desc-248').innerHTML = marked.parse(`Plugin for remote control of *VLC media player*.
+
+**Release notes:**
+
+*Login and setting is done automatically, during plugin installation!*
+
+How to use it:
+
+- Install the VLC media player plugin.
+- Start VLC media player.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Vlc.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="voicemeeter xeroxdev plugin this loupedeck plugin allows you to control the voicemeeter application ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Voicemeeter</div>
+          <div class="card-author">XeroxDev</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v3.0.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">This Loupedeck Plugin allows you to control the VoiceMeeter application </div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-3')">Show description ▼</button>
+        <div class="full-desc" id="desc-3">
+          <script>document.getElementById('desc-3').innerHTML = marked.parse(`**What is this Plugin?**
+This Loupedeck Plugin allows you to control your [VoiceMeeter](https://voicemeeter.com) instance.
+
+**How to use it?**
+1. Install [VoiceMeeter](https://voicemeeter.com)
+2. Install the Plugin
+3. Add Actions to Loupedeck
+4. Have fun
+
+**Support channels**
+[GitHub](https://github.com/XeroxDev/Loupedeck-plugin-VoiceMeeter/issues/new/choose) - [Discord](https://s.tswi.me/discord)`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/VoiceMeeter.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="voicemod voicemod s.l. (developed by xeroxdev) plugin voicemod features a variety of filters that change your voice in real-time - loupedeck gives you instant, tactile control.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Voicemod</div>
+          <div class="card-author">Voicemod S.L. (developed by XeroxDev)</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Voicemod features a variety of filters that change your voice in real-time - Loupedeck gives you instant, tactile control.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/VoicemodPlugin.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="volume control oddbear plugin plugin for controlling windows audio volume and default device for input and output sources.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Volume Control</div>
+          <div class="card-author">oddbear</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.3</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Plugin for controlling Windows audio volume and default device for input and output sources.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-131')">Show description ▼</button>
+        <div class="full-desc" id="desc-131">
+          <script>document.getElementById('desc-131').innerHTML = marked.parse(`Plugin for controlling Windows audio volume and default device for input and output sources.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/VolumeControl.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="weather plugin steinerd.com plugin get essential near-real-time weather via openweathermap apis.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Weather Plugin</div>
+          <div class="card-author">Steinerd.com</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v2.0.0</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Get essential near-real-time weather via OpenWeatherMap APIs.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Weather.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="webhooks steinerd.com plugin webhooks will call any type of http endpoint (such as ifttt, zapier, etc.) without opening a browser.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Webhooks</div>
+          <div class="card-author">Steinerd.com</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.9</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Webhooks will call any type of HTTP endpoint (such as IFTTT, Zapier, etc.) without opening a browser.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Webhooks.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="winaudio notadoctor99 plugin adds features that are missing from the loupedeck &amp;quot;volume mixer&amp;quot; control center">
+      <div class="card-header">
+        <div>
+          <div class="card-title">WinAudio</div>
+          <div class="card-author">NotADoctor99</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Adds features that are missing from the Loupedeck &quot;Volume Mixer&quot; control center</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-354')">Show description ▼</button>
+        <div class="full-desc" id="desc-354">
+          <script>document.getElementById('desc-354').innerHTML = marked.parse(`Adds features that are missing from the Loupedeck "Volume Mixer" control center:
+* Change default audio output device with one button press.
+* Mute all available audio output devices with one button press.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/WinAudio.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="windows store applications notadoctor99 plugin easily launch windows store applications like calculator, notepad, paint, netflix, skype or affinity photo.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Windows Store Applications</div>
+          <div class="card-author">NotADoctor99</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">LD+</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Easily launch Windows Store applications like Calculator, Notepad, Paint, Netflix, Skype or Affinity Photo.</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-348')">Show description ▼</button>
+        <div class="full-desc" id="desc-348">
+          <script>document.getElementById('desc-348').innerHTML = marked.parse(`Easily launch Windows Store applications like Calculator, Notepad, Netflix, Skype or Affinity Photo that otherwise are not possible to start with Loupedeck built-in "Open Application" command.`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Metro.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="worldclock dominik werland plugin display the local time and date in cities all around the world plus other time/date features">
+      <div class="card-header">
+        <div>
+          <div class="card-title">WorldClock</div>
+          <div class="card-author">Dominik Werland</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.3.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span> <span class="badge badge-device">Live S</span></div>
+      <div class="short-desc">Display the local time and date in cities all around the world plus other time/date features</div>
+      
+        <button class="desc-toggle" onclick="toggleDesc('desc-338')">Show description ▼</button>
+        <div class="full-desc" id="desc-338">
+          <script>document.getElementById('desc-338').innerHTML = marked.parse(`Display the local time and date in cities all around the world.
+
+**Features:**
+
+- 12h (am/pm) and 24h time format
+- Localized to EN, DE, FR
+- 16 different functions/appearences
+- Date functions (calendar week, day of the year, days to date + many more!)
+- Analog watch face with or without digital time and location
+- Integrated timezone database - no external connections to internet services are made!
+
+If you have any issues with the plugin or feature requests, get in touch (links on the right)!`);</script>
+        </div>
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/WorldClock.lplug4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="2" data-search="youtube music desktop xeroxdev plugin this plugin allows you to control the youtube music desktop app.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Youtube Music Desktop</div>
+          <div class="card-author">XeroxDev</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Plugin</span> <span class="badge badge-ver">v1.0.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">Live S</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">This Plugin allows you to control the YouTube Music Desktop App.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/YTMDesktopPlugin.lplug4" download>Download</a>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div class="section" data-section-type="1">
+    <div class="section-title">Profile (48)</div>
+    <div class="grid">
+      
+    <div class="card" data-type="1" data-search="ableton live david heartbreak profile this profile offers a large variety of actions for  editing and recording and also for controlling clips.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Ableton Live</div>
+          <div class="card-author">David Heartbreak</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">This profile offers a large variety of actions for  editing and recording and also for controlling clips.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Ableton_heartbreak.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="affinity designer loupedeck profile includes preassigned icons from the sideshowfx sample pack.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Affinity Designer</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Includes preassigned icons from the SideshowFX sample pack.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_AffinityDesigner_Jenny_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="affinity photo loupedeck profile includes preassigned icons from the sideshowfx sample pack.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Affinity Photo</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Includes preassigned icons from the SideshowFX sample pack.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_AffinityPhoto_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="atomos neon atomos profile loupedeck live and the free atomremote app allow for flexible control options and essential monitoring tools.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Atomos Neon</div>
+          <div class="card-author">Atomos</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Loupedeck LIVE and the free AtomRemote App allow for flexible control options and essential monitoring tools.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AtomRemote.NEON.APP.-.LoupeDeck.Live.lp4" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="audacity loupedeck profile gives you all the functionality offered by its default shortcuts.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Audacity</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Gives you all the functionality offered by its default shortcuts.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Audacity.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="blender keith o'donnel profile an easy to understand profile with about 70 recorded shortcuts. actions are laid out in 4 workspaces. views in blender can be changed with ct's square buttons.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Blender</div>
+          <div class="card-author">Keith O'Donnel</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">An easy to understand profile with about 70 recorded shortcuts. Actions are laid out in 4 workspaces. Views in Blender can be changed with CT's square buttons.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Blender_KeithODonnel_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="cinema 4d jonathan winbush profile get access to commonly used shortcuts, grouped into 5 workspaces, for main controls, file menu, viewport, render controls and window menu.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Cinema 4D</div>
+          <div class="card-author">Jonathan Winbush</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Get access to commonly used shortcuts, grouped into 5 workspaces, for Main controls, File Menu, Viewport, Render controls and Window menu.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Cinema4D_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="clip studio paint loupedeck profile with this profile you will able to adjust brush size and opacity, or zoom the canvas, with a dial.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Clip Studio Paint</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">With this profile you will able to adjust Brush Size and Opacity, or Zoom the Canvas, with a dial.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ClipStudioPaint.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="cubase loupedeck profile with this profile, you will be able to access transport controls, editing actions and functions and views/windows. 
+">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Cubase</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">With this profile, you will be able to access transport controls, editing actions and functions and views/windows. 
+</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Cubase_Pro.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="darktable loupedeck profile this profile allows easy access to shortcuts and photo 
+editing functions and tools.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Darktable</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">This profile allows easy access to shortcuts and photo 
+editing functions and tools.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Darktable_CT_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="davinci resolve loupedeck profile contains an extensive set of important editing functions, options for audio post and fusion.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">DaVinci Resolve</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Contains an extensive set of important editing functions, options for audio post and Fusion.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Resolve_Jenny_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="davinci resolve loupedeck profile contains an extensive set of important editing functions, options for audio post and fusion.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">DaVinci Resolve</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Contains an extensive set of important editing functions, options for audio post and Fusion.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Live_Resolve_Mac.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="excel loupedeck profile supports various tasks within and throughout sheets.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Excel</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Supports various tasks within and throughout Sheets.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Excel_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="figma loupedeck profile starter profile for those who want to streamline figma workflows.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Figma</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Starter profile for those who want to streamline Figma workflows.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_FigmaDT_Mac_AntonM.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="filmora loupedeck profile a basic profile to speed up editing in filmora. ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Filmora</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">A basic profile to speed up editing in Filmora. </div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Filmora_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="final cut pro loupedeck profile a simplified version of loupedeck's default profile for final cut pro.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Final Cut Pro</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">A simplified version of Loupedeck's default profile for Final Cut Pro.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/FCP_simplified.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="final cut pro with commandpost loupedeck profile an adaption of loupedeck's default profile, triggering actions via the commandpost plugin.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Final Cut Pro with CommandPost</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">An adaption of Loupedeck's default profile, triggering actions via the CommandPost plugin.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/FCP_CP.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="freecommander andreas brauner profile all the useful shortcuts readily laid out for easy navigation in freecommander.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">FreeCommander</div>
+          <div class="card-author">Andreas Brauner</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">All the useful shortcuts readily laid out for easy navigation in FreeCommander.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_FreeCommander_AndreasBrauner.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="garageband loupedeck profile gives you all the functionality offered by its default shortcuts.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">GarageBand</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Gives you all the functionality offered by its default shortcuts.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Garageband_Mac.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="gimp loupedeck profile 	
+supports your workflow with actions for selection, opening palettes, accessing tools, handling layers and basic editing.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Gimp</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">	
+Supports your workflow with actions for selection, opening palettes, accessing tools, handling layers and basic editing.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Gimp_JennyM_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="indesign loupedeck profile this profile allows easy access to shortcuts and tools. helps to organize your page layouts.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">InDesign</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">This profile allows easy access to shortcuts and tools. Helps to organize your Page layouts.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/InDesign_CT_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="insta360 simon stuart profile this insta360 studio profile for macos significantly speeds up 360 reframing and editing workflows.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Insta360</div>
+          <div class="card-author">Simon Stuart</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">This Insta360 Studio profile for MacOS significantly speeds up 360 reframing and editing workflows.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Insta360.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="krita loupedeck profile using this profile, you can concentrate on painting while having dial adjustments and panel opening shortcuts at hand.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Krita</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Using this profile, you can concentrate on painting while having dial adjustments and panel opening shortcuts at hand.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Krita.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="lightroom cc simon stuart profile this adobe lightroom cc profile provides fundamental controls for the non-classic version of lightroom… without the need for any plugins.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Lightroom CC</div>
+          <div class="card-author">Simon Stuart</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">This Adobe Lightroom CC Profile provides fundamental controls for the non-Classic version of Lightroom… without the need for any Plugins.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Adobe_Lightroom_CC_NoPlugins.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="logic pro loupedeck profile get immediate access to transport controls and editing actions needed for an efficient workflow. ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Logic Pro</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Get immediate access to transport controls and editing actions needed for an efficient workflow. </div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LogicProX.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="luminar loupedeck profile make the most of the available shortcuts in luminar.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Luminar</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Make the most of the available shortcuts in Luminar.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Luminar_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="media composer loupedeck profile access essential editing tools and controls.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Media Composer</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Access essential editing tools and controls.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AvidMC_Win_CT.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="notion loupedeck profile style your text, shoot commands into notion and bring up e.g. emojis with one button press.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Notion</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Style your text, shoot commands into Notion and bring up e.g. emojis with one button press.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Notion_Mac.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="nuke loupedeck profile contains 3 workspaces for the node graph, curve editor, rotoscopy and accessing nodes (with icons).">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Nuke</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Contains 3 workspaces for the Node Graph, Curve Editor, Rotoscopy and accessing Nodes (with icons).</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Nuke_MAC.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="outlook loupedeck profile allows scrolling through emails with a dial. organize and control your outlook with roughly 70 recorded shortcuts.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Outlook</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Allows scrolling through emails with a dial. Organize and control your Outlook with roughly 70 recorded shortcuts.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Outlook_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="photo mechanic loupedeck profile allows to quickly ingest, rate and export photos.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Photo Mechanic</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Allows to quickly ingest, rate and export photos.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/PhotoMechanic_CT_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="photoshop jenny meißner profile a very simple profile with few macros. meant for basic retouching and color grading using levels adj. layers.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Photoshop</div>
+          <div class="card-author">Jenny Meißner</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">A very simple profile with few macros. Meant for basic Retouching and Color Grading using Levels Adj. Layers.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Photoshop_JennySimple_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="powerpoint loupedeck profile edit and view your powerpoint slides comfortably.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Powerpoint</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Edit and view your Powerpoint slides comfortably.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Powerpoint.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="premiere pro eugene afanasiev profile an advanced profile that contains macros for technical purposes and repetetive tasks. 11 workspaces and cross links between pages.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Premiere Pro</div>
+          <div class="card-author">Eugene Afanasiev</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">An advanced profile that contains macros for technical purposes and repetetive tasks. 11 workspaces and cross links between pages.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_PremierePro_4.3_ea_v1_EugeneAfanasiev_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="premiere pro andreas brauner profile an advanced profile made by loupedeck power user. in german. contains 11 workspaces and cross links between pages.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Premiere Pro</div>
+          <div class="card-author">Andreas Brauner</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">An advanced profile made by Loupedeck power user. In German. Contains 11 workspaces and cross links between pages.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_PremierePro_AndreasBrauner_v2.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="ptzoptics ptzoptics profile a midi based profile to control ptzoptics cameras.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">PTZoptics</div>
+          <div class="card-author">PTZOptics</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">A MIDI based profile to control PTZOptics cameras.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ptzoptics.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="reaper loupedeck profile easy access 
+shortcuts and tools, helps you organize your workflow and make it 
+quicker.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Reaper</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Easy access 
+shortcuts and tools, helps you organize your workflow and make it 
+quicker.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Reaper.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="reason daddy long les profile 11 dial functions and over 30 press actions grouped into 3 workspaces.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Reason</div>
+          <div class="card-author">Daddy Long Les</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">11 dial functions and over 30 press actions grouped into 3 workspaces.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Reason_LesTitford_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="rx 9 loupedeck profile gets you immediate access to transport controls and editing actions needed for an efficient workflow.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">RX 9</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Gets you immediate access to transport controls and editing actions needed for an efficient workflow.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Izotope_RX9.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="serato dj pro loupedeck profile mix and produce music with the serato dj pro custom profile.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Serato DJ Pro</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Mix and produce music with the Serato DJ Pro custom profile.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Serato_DJ_Pro.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="slack loupedeck profile control your slack channels and chats comfortably with loupedeck.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Slack</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Control your Slack channels and chats comfortably with Loupedeck.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Slack_CT_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="studioone presonus software ltd profile streamline studio one's one-window workflow even further with the help of this custom profile.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">StudioOne</div>
+          <div class="card-author">Presonus Software Ltd</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Streamline Studio One's one-window workflow even further with the help of this custom profile.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Presonus_StudioOne.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="substance 3d painter loupedeck profile get precision control over your 3d painting and texturing.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Substance 3D Painter</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">Get precision control over your 3D Painting and Texturing.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_SustancePainter_Jenny_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="tower loupedeck profile a minimalistic profile with 13 clearly named shortcut functions to be used in tower git client.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Tower</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">A minimalistic profile with 13 clearly named Shortcut functions to be used in Tower Git Client.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Live_Tower_Mac_VilleR.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="vegas pro loupedeck profile this profile contains 3 workspaces for editing, audio tasks and accessing different windows in vegas pro.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Vegas Pro</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">This profile contains 3 workspaces for Editing, Audio tasks and Accessing different Windows in Vegas Pro.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_VegasPro_Jenny_Win.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="visual studio code loupedeck profile visual studio code profile for software developers. profile contains actions for editing, editor navigation, preferences, debugging etc.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Visual Studio Code</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">Live</span></div>
+      <div class="short-desc">Visual Studio Code profile for software developers. Profile contains actions for editing, editor navigation, preferences, debugging etc.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Live_VisualCode_Mac_VilleR.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="zbrush loupedeck profile this profile serves as a good starting point for your own customised profile for your own workflow.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">ZBrush</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span> <span class="badge badge-device">CT</span></div>
+      <div class="short-desc">This profile serves as a good starting point for your own customised profile for your own workflow.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Zbrush_PauliS_MAC.lp5" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="1" data-search="zoom jonathan zuck profile a profile with 2 workspaces for &amp;quot;attendee&amp;quot; and &amp;quot;host&amp;quot;. all actions have free icons preassigned.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Zoom</div>
+          <div class="card-author">Jonathan Zuck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Profile</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">A profile with 2 workspaces for &quot;Attendee&quot; and &quot;Host&quot;. All actions have free icons preassigned.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CT_Zoom_JZ_Mac.lp5" download>Download</a>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div class="section" data-section-type="4">
+    <div class="section-title">Icon Library (71)</div>
+    <div class="grid">
+      
+    <div class="card" data-type="4" data-search="ableton live icon sampler sideshowfx icon library 50 ableton live icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Ableton Live Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Ableton Live icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AbletonLiveIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="access 365 icon sample vivre-motion icon library 50 microsoft access 365 ribbon menu sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Access 365 Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft Access 365 Ribbon Menu Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ACCESS365_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="affinity designer icon sampler sideshowfx icon library 60 affinity designer icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Affinity Designer Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Affinity Designer icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AffinityDesignerIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="affinity photo icon sampler sideshowfx icon library 60 affinity photo icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Affinity Photo Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Affinity Photo icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AffinityPhotoIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="after effects icon sampler sideshowfx icon library 80 after effects icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">After Effects Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">80 After Effects icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AfterEffectsIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="animated gif icon sample vivre-motion icon library 48 exciting animated gif icons which bring movement to the loupedeck.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Animated GIF Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">48 Exciting animated GIF icons which bring movement to the Loupedeck.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AnimatedGIFIconSample_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="animated teams 3d emojis icon sample vivre-motion icon library 50 microsoft teams 3d animated chat emojis sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Animated Teams 3D Emojis Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft Teams 3D Animated Chat Emojis Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/TEAMS3D_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="arrows icon sample vivre-motion icon library 52 sample arrows for each direction in 90° steps.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Arrows Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">52 Sample arrows for each direction in 90° steps.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ArrowsIconSample_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="audition icon sampler sideshowfx icon library 50 audition icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Audition Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Audition icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AuditionIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="avid media composer icon sampler sideshowfx icon library 60 avid media composer icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Avid Media Composer Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Avid Media Composer icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AvidMediaComposerIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="award streaming icons sideshowfx icon library 120 streaming and general use icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Award Streaming Icons</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">120 Streaming and General Use icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/AwardStreamingIcons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="background &amp;amp; object icons sampler sideshowfx icon library 50 generic icons for you to use when creating your own loupedeck profiles. included are 30 static icons and 20 animated icons (looping gifs).">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Background &amp; Object Icons Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Generic Icons for you to use when creating your own Loupedeck profiles. Included are 30 static icons and 20 animated icons (looping gifs).</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/BackgroundObjectIconsSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="black and white animated icons own3d icon library 188 high-quality animated loupedeck icons for every use case">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Black and White Animated Icons</div>
+          <div class="card-author">OWN3D</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">188 high-quality animated Loupedeck icons for every use case</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OWN3DBlackWhiteGIF_1_0_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="black and white icons own3d icon library 188 high-quality loupedeck icons for every use case">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Black and White Icons</div>
+          <div class="card-author">OWN3D</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">188 high-quality Loupedeck icons for every use case</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OWN3DBlackWhite_1_0_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="blade streaming icons sideshowfx icon library 120 streaming and general use icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Blade Streaming Icons</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">120 Streaming and General Use icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/BladeStreamingIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="blender icon sampler sideshowfx icon library 60 blender icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Blender Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Blender icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/BlenderIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="capture one icon sampler sideshowfx icon library 60 capture one icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Capture One Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Capture One icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CaptureOneIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="car dashboard vivre-motion icon library 40 car interior dashboard symbols for racing und driving simulator.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Car Dashboard</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">40 Car Interior Dashboard Symbols for Racing und Driving Simulator.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CarDashboard_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="cinema 4d icon sampler sideshowfx icon library 70 cinema 4d icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Cinema 4D Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">70 Cinema 4D icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Cinema4DIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="color matrix areas vivre-motion icon library 32 color-calibrated areas of the vivre-motion dna color matrix to create additional icons in the same color scheme.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Color Matrix Areas</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">32 Color-calibrated areas of the vivre-motion DNA Color Matrix to create additional icons in the same color scheme.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ColorMatrixAreas_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="country flags icon sample vivre-motion icon library 50 country flags sample pack icons 
+the complete package are available @ vivre-motion">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Country Flags Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Country Flags Sample Pack Icons 
+The Complete Package are available @ VIVRE-MOTION</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CountryFlags.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="cubase icon sampler sideshowfx icon library 60 cubase icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Cubase Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Cubase icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/CubaseIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="davinci resolve icon sampler sideshowfx icon library 70 davinci resolve icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Davinci Resolve Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">70 Davinci Resolve icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/DavinciResolveIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="dial strips icon sample vivre-motion icon library 30 windows 11 and office system dial strips icons sample pack for maximum control over your workflow.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Dial Strips Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">30 Windows 11 and Office System Dial Strips Icons Sample Pack for maximum Control over your Workflow.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/DialStripsIconSample_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="farming simulator 19-22 iconcity icon library in this sample pack we have a few key icons required for everyday duties while down on  the farm.
+">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Farming Simulator 19-22</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">In this sample pack we have a few key icons required for everyday duties while down on  the farm.
+</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Farming_Simulator_19-22_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="file format icon sample vivre-motion icon library 23 file format icon sample pack like zip, excel, batch, illustrator, pdf and many more…">
+      <div class="card-header">
+        <div>
+          <div class="card-title">File Format Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">23 File Format Icon Sample Pack like ZIP, Excel, Batch, Illustrator, PDF and many more…</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/FileFormatIconSample_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="final cut pro icon sampler sideshowfx icon library 70 final cut icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Final Cut Pro Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">70 Final Cut icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/FinalCutProIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="flight sim vivre-motion icon library 100 cockpit and interface sample pack icons for your microsoft flight simulator.
+the complete package are available @ vivre-motion">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Flight Sim</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">100 Cockpit and Interface Sample Pack Icons for your Microsoft Flight Simulator.
+The Complete Package are available @ VIVRE-MOTION</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/FlightSim.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="glitchpro animated icons own3d icon library 188 high-quality animated loupedeck icons for every use case">
+      <div class="card-header">
+        <div>
+          <div class="card-title">GlitchPro Animated Icons</div>
+          <div class="card-author">OWN3D</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">188 high-quality animated Loupedeck icons for every use case</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OWN3DGlitchProGIF_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="glitchpro icons own3d icon library 188 high-quality loupedeck icons for every use case">
+      <div class="card-header">
+        <div>
+          <div class="card-title">GlitchPro Icons</div>
+          <div class="card-author">OWN3D</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">188 high-quality Loupedeck icons for every use case</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OWN3DGlitchPro_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="green aura iconcity icon library make your loupedeck shine with these .gif animated icons set.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Green Aura</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Make your Loupedeck shine with these .gif animated icons set.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/GreenAura_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="iconcityproductivityiconsampler loupedeck icon library ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">IconcityProductivityIconSampler</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/IconcityProductivityIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="illustrator icon sampler sideshowfx icon library 60 illustrator icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Illustrator Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Illustrator icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/IllustratorIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="keyboard layout icon sample vivre-motion icon library 109 keyboard layout keycap label icons sample pack to emulate a full querty/quertz computer keyboard.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">KEYBOARD LAYOUT Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">109 KEYBOARD LAYOUT KeyCap Label Icons Sample Pack to emulate a full QUERTY/QUERTZ Computer Keyboard.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/KeyboardLayout_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="lightroom classic icon sampler sideshowfx icon library 70 lightroom classic icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Lightroom Classic Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">70 Lightroom Classic icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LightroomClassicIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="loupedeck creativity icons loupedeck icon library default icon pack designed for photo and video editing by loupedeck (in material icon style).">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Loupedeck Creativity Icons</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Default icon pack designed for photo and video editing by Loupedeck (in material icon style).</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LoupedeckCreativityIcons_1_0_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="loupedeck general icons loupedeck icon library default icon pack for general use by loupedeck (in material icon style).">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Loupedeck General Icons</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Default icon pack for general use by Loupedeck (in material icon style).</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LoupedeckGeneralIcons_1_0_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="loupedeck icon pack loupedeck icon library default icon pack in the style of material icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Loupedeck Icon Pack</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.1</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Default icon pack in the style of material icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LoupedeckIconPack_1_1.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="loupedeck media icons loupedeck icon library default icon pack for generic media use by loupedeck (in material icon style).">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Loupedeck Media Icons</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Default icon pack for generic media use by Loupedeck (in material icon style).</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LoupedeckMediaIcons_1_0_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="loupedeck text background icons loupedeck icon library loupedeck background icons prior to version 5.4">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Loupedeck Text Background Icons</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Loupedeck Background Icons prior to version 5.4</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LoupedeckBackgroundIcons.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="loupedeckanimatediconpack loupedeck icon library ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">LoupedeckAnimatedIconPack</div>
+          <div class="card-author">Loupedeck</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/LoupedeckAnimatedIconPack.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="microsoft excel icon sampler sideshowfx icon library 60 microsoft excel icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Microsoft Excel Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Microsoft Excel icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MicrosoftExcelIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="microsoft powerpoint icon sampler sideshowfx icon library 60 microsoft powerpoint icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Microsoft PowerPoint Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Microsoft PowerPoint icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MicrosoftPowerPointIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="microsoft word icon sampler sideshowfx icon library 60 microsoft word icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Microsoft Word Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">60 Microsoft Word icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MicrosoftWordIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="ms flight sim 2020 iconcity icon library in this sample pack we offer a feel for what is available for m/soft flight simulator 2020.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">MS Flight Sim 2020</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">In this sample pack we offer a feel for what is available for M/soft Flight Simulator 2020.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Microsoft_Flight_Sim_2020_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="music notes sample vivre-motion icon library 
+30 musical notes keys sample pack icons to optimize your workflow">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Music Notes Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">
+30 Musical Notes Keys Sample Pack Icons to optimize your Workflow</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/MusicNotes.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="neon streaming icons sideshowfx icon library 120 streaming and general use icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Neon Streaming Icons</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">120 Streaming and General Use icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/NeonStreamingIcons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="onenote 365 icon sample vivre-motion icon library 50 microsoft onenote 365 ribbon menu sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">OneNote 365 Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft OneNote 365 Ribbon Menu Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ONENOTE365_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="outlook 365 icon sample vivre-motion icon library 50 microsoft outlook 365 ribbon menu sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Outlook 365 Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft Outlook 365 Ribbon Menu Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OUTLOOK365_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="photoshop icon sampler sideshowfx icon library 70 free photoshop icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Photoshop Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">70 free Photoshop icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/PhotoshopIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="pokémon go icon sample vivre-motion icon library 30 pokémon go sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Pokémon GO Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">30 Pokémon GO Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/POKEMONGO_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="premiere pro icon sampler sideshowfx icon library 80 premiere pro icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Premiere Pro Icon Sampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">80 Premiere Pro icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/PremiereProIconSampler_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="productivity iconcity icon library making your office life easier by having meeting controls on hand!">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Productivity</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Making your office life easier by having meeting controls on hand!</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Productivity_art_work_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="project 365 icon sample vivre-motion icon library 50 microsoft project 365 ribbon menu sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Project 365 Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft Project 365 Ribbon Menu Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/PROJECT365_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="relic streaming icons sideshowfx icon library 120 streaming and general use icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Relic Streaming Icons</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">120 Streaming and General Use icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/RelicStreamingIcons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="sideshowfxforfinalcutpro sideshowfx icon library ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">SideshowfxForFinalCutPro</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SideshowfxForFinalCutPro.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="sideshowfxforphotoshop sideshowfx icon library ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">SideshowfxForPhotoshop</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SideshowfxForPhotoshop.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="sideshowfxiconsampler sideshowfx icon library ">
+      <div class="card-header">
+        <div>
+          <div class="card-title">SideshowfxIconSampler</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SideshowfxIconSampler.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="sim racer iconcity icon library compatible with most popular sim racing games on the market today.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Sim Racer</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Compatible with most popular Sim Racing Games on the market today.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Sim_Racer_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="smart home icon sample vivre-motion icon library 40 smart home icons sample pack for all smart devices and lamps in your environment.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Smart Home Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">40 SMART HOME Icons Sample Pack for all smart devices and lamps in your environment.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SmartHome_magenta_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="smart switch icons vivre-motion icon library 
+100+ simplified geometric shapes and indicators to label yourself for a clean setup.
+the complete package are available @ vivre-motion">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Smart Switch Icons</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">
+100+ Simplified Geometric Shapes and Indicators to label Yourself for a clean Setup.
+The Complete Package are available @ VIVRE-MOTION</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SmartSwitch.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="star citizen mining icons iconcity icon library this sample pack covers mining within the game.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Star Citizen mining icons</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">This sample pack covers Mining within the game.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Star_Citizen_mining_icons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="streamers-everydays iconcity icon library make your loupedeck shine with these .gif animated icons sets.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Streamers-Everydays</div>
+          <div class="card-author">iConCity</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">Make your Loupedeck shine with these .gif animated icons sets.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Streamers-Everydays_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="superhero streaming icons sideshowfx icon library 120 streaming and general use icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Superhero Streaming Icons</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">120 Streaming and General Use icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SuperheroStreamingIcons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="system office icon sample vivre-motion icon library 40 windows 11 and office system icons sample pack for the optimal business day.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">System Office Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">40 Windows 11 and Office System Icons Sample Pack for the optimal business day.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/SystemIconSampleOffice_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="teams icon sample vivre-motion icon library 80 microsoft teams interface sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Teams Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">80 Microsoft Teams Interface Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/TEAMSicons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="unique animated icons own3d icon library 188 high-quality animated loupedeck icons for every use case">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Unique Animated Icons</div>
+          <div class="card-author">OWN3D</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">188 high-quality animated Loupedeck icons for every use case</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OWN3DUniqueGIF_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="unique icons own3d icon library 188 high-quality loupedeck icons for every use case">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Unique Icons</div>
+          <div class="card-author">OWN3D</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">188 high-quality Loupedeck icons for every use case</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/OWN3DUnique_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="visio 365 icon sample vivre-motion icon library 50 microsoft visio 365 ribbon menu sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Visio 365 Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft Visio 365 Ribbon Menu Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/VISIO365_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="windows 98 se icon sample vivre-motion icon library 50 microsoft windows 98 se operating system retro vintage sample pack icons">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Windows 98 SE Icon Sample</div>
+          <div class="card-author">VIVRE-MOTION</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">50 Microsoft Windows 98 SE Operating System Retro Vintage Sample Pack Icons</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/Windows98.licons" download>Download</a>
+      </div>
+    </div>
+    <div class="card" data-type="4" data-search="zoom icons sideshowfx icon library 92 zoom icons for you to use when creating your own loupedeck profiles.">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Zoom Icons</div>
+          <div class="card-author">SideshowFX</div>
+        </div>
+      </div>
+      <div class="badges"><span class="badge badge-type">Icon Library</span> <span class="badge badge-ver">v1.0</span> <span class="badge badge-win">Windows</span> <span class="badge badge-mac">macOS</span></div>
+      <div class="short-desc">92 Zoom icons for you to use when creating your own Loupedeck profiles.</div>
+      
+      <div class="card-footer">
+        <a class="dl-btn" href="https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download/v1.0/ZoomIcons_1_0.licons" download>Download</a>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Loupedeck v5.8 or older &mdash; Legacy Marketplace archived for existing users. No longer maintained.
+  &nbsp;&middot;&nbsp; <a href="notice.html">About this page</a>
+  &nbsp;&middot;&nbsp; <a href="https://www.logitech.com/en-us/tos/terms.html" target="_blank">Terms of Use</a>
+  <br />
+  If you are an author of any of the archived assets and wish to have your content removed, contact us at
+  <a href="mailto:marketplacecontribute@logitech.com">marketplacecontribute@logitech.com</a>.
+</footer>
+
+<script>
+const cards = document.querySelectorAll('.card');
+let activeType = 'all';
+
+function filterCards() {
+  const q = document.getElementById('search').value.toLowerCase();
+  let visible = 0;
+  cards.forEach(c => {
+    const matchType = activeType === 'all' || c.dataset.type === activeType;
+    const matchText = !q || c.dataset.search.includes(q);
+    const show = matchType && matchText;
+    c.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  // Hide empty section headings
+  document.querySelectorAll('.section').forEach(sec => {
+    const anyVisible = [...sec.querySelectorAll('.card')].some(c => !c.classList.contains('hidden'));
+    sec.classList.toggle('hidden', !anyVisible);
+  });
+  document.getElementById('count').textContent = visible + ' package' + (visible !== 1 ? 's' : '');
+}
+
+function setFilter(type, btn) {
+  activeType = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+
+function toggleDesc(id) {
+  const el = document.getElementById(id);
+  const btn = el.previousElementSibling;
+  el.classList.toggle('open');
+  btn.textContent = el.classList.contains('open') ? 'Hide description ▲' : 'Show description ▼';
+}
+
+// Init count
+filterCards();
+</script>
+</body>
+</html>
