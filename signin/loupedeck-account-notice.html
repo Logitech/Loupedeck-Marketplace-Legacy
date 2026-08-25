@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Loupedeck Account Service Retired</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+
+    <link rel="icon" href="images/icons/favicon-150x150.png" sizes="32x32" />
+
+    <style>
+      @font-face {
+        font-family: "Campton";
+        src: url("fonts/light.woff2") format("woff2"),
+          url("fonts/light.woff") format("woff");
+        font-weight: 300;
+      }
+      @font-face {
+        font-family: "Campton";
+        src: url("fonts/book.woff2") format("woff2");
+        font-weight: normal;
+      }
+      @font-face {
+        font-family: "Campton";
+        src: url("fonts/bold.woff2") format("woff2"),
+          url("fonts/bold.woff") format("woff");
+        font-weight: bold;
+      }
+
+      *,
+      ::after,
+      ::before {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        font-family: Campton, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background-color: #1a1a1a;
+        background-attachment: fixed;
+        background-image: url("images/bg.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        color: #9e9ca0;
+        margin: 0;
+        min-height: 100vh;
+        padding: 3rem 1.5rem;
+      }
+
+      a {
+        color: #bea1fe;
+      }
+
+      a:hover {
+        color: #f0f0f0;
+      }
+
+      .container {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        min-height: calc(100vh - 6rem);
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          min-height: calc(100vh - 12rem);
+          padding-bottom: 3rem;
+          padding-top: 3rem;
+        }
+      }
+
+      .panel {
+        background-color: #29282a;
+        border-radius: 8px;
+        margin: 0 auto;
+        max-width: 100%;
+        padding: 3rem 2rem;
+        text-align: center;
+        width: 31rem;
+      }
+
+      .companyLogo {
+        display: block;
+        margin: 0 auto 2rem;
+        max-width: 100%;
+      }
+
+      .statusIcon {
+        align-items: center;
+        background: #40195d;
+        border-radius: 50%;
+        display: inline-flex;
+        height: 4rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        width: 4rem;
+      }
+
+      .statusIcon svg {
+        fill: none;
+        height: 2rem;
+        stroke: #bea1fe;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+        width: 2rem;
+      }
+
+      h1 {
+        color: #f0f0f0;
+        font-size: 1.35rem;
+        font-weight: 300;
+        line-height: 1.35;
+        margin: 0 0 1rem;
+      }
+
+      p {
+        color: #d7d5d9;
+        font-size: 0.95rem;
+        font-weight: 300;
+        line-height: 1.6;
+        margin: 0 auto 1.5rem;
+        max-width: 25rem;
+      }
+
+      .muted {
+        color: #9e9ca0;
+        font-size: 0.85rem;
+        margin-bottom: 0;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 2rem 0 1.5rem;
+      }
+
+      .button {
+        align-items: center;
+        border-radius: 4px;
+        display: inline-flex;
+        font-size: 0.9rem;
+        font-weight: bold;
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: 0.8rem 1.25rem;
+        text-decoration: none;
+        transition: background-color 180ms ease, border-color 180ms ease;
+      }
+
+      .button:focus-visible {
+        outline: 2px solid #bea1fe;
+        outline-offset: 2px;
+      }
+
+      .buttonPrimary {
+        background: #7f32ba;
+        color: #f0f0f0;
+      }
+
+      .buttonPrimary:hover {
+        background: #40195d;
+        color: #f0f0f0;
+      }
+
+      .buttonSecondary {
+        border: 1px solid #4a484b;
+        color: #f0f0f0;
+      }
+
+      .buttonSecondary:hover {
+        background: #424144;
+        color: #f0f0f0;
+      }
+
+      #api {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container unified_container" role="main">
+      <section class="panel panel-default" aria-labelledby="retired-title">
+        <div class="panel-body">
+          <img
+            class="companyLogo"
+            data-tenant-branding-logo="true"
+            src="images/logo.svg"
+            alt="Loupedeck"
+          />
+
+          <div class="statusIcon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+
+          <h1 id="retired-title">Loupedeck Account service is no longer in use</h1>
+          <p>
+            Interactive sign-in for the legacy Loupedeck Marketplace has been
+            discontinued. You do not need a Loupedeck Account to browse the
+            archived Marketplace packages.
+          </p>
+
+          <div class="actions">
+            <a
+              class="button buttonPrimary"
+              href="https://logitech.github.io/Loupedeck-Marketplace-Legacy/"
+              target="_blank"
+              rel="noopener"
+            >
+              Open Legacy Marketplace
+            </a>
+            <a
+              class="button buttonSecondary"
+              href="https://support.loupedeck.com/"
+              target="_blank"
+              rel="noopener"
+            >
+              Visit Loupedeck Support
+            </a>
+          </div>
+
+          <p class="muted">
+            Looking for Marketplace downloads? Use the Legacy Marketplace link above.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div id="api"></div>
+  </body>
+</html>
