@@ -1,0 +1,25 @@
+{
+  "v59": {
+    "id": "v59",
+    "title": "Loupedeck Marketplace v5.9",
+    "softwareRange": "5.9.x",
+    "outputPath": "marketplaces/v59/index.html",
+    "releaseTag": "marketplace-v59",
+    "releaseDownloadBaseUrl": "https://github.com/Logitech/Loupedeck-Marketplace-Legacy/releases/download",
+    "downloadMode": "release",
+    "dataDir": "data/v59",
+    "workingSourceDir": "working/source",
+    "sources": {
+      "catalog": {
+        "id": "v59-catalog",
+        "url": "https://loupedeckmarketplace.com/api/assets",
+        "fileName": "v59-catalog-assets.json"
+      },
+      "packages": {
+        "id": "v59-package-api",
+        "url": "https://marketplace.logitech.com/api/v1/package/published",
+        "fileName": "v59-package-published.json"
+      }
+    }
+  }
+}

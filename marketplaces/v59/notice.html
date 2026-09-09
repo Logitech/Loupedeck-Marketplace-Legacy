@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loupedeck Marketplace v5.9 Notice</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #18161B;
+      color: #F0F0F0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      height: 62px;
+      background-color: #29282A;
+      border-bottom: 1px solid #4A484B;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: #F0F0F0;
+      text-decoration: none;
+    }
+
+    .logo span { color: #7F32BA; }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+    }
+
+    .card {
+      background-color: #333234;
+      border: 1px solid #4A484B;
+      border-radius: 8px;
+      max-width: 620px;
+      width: 100%;
+      padding: 48px 48px 40px;
+      text-align: center;
+    }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 28px;
+      background: #40195D;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon svg {
+      width: 26px;
+      height: 26px;
+      fill: none;
+      stroke: #BEA1FE;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 16px;
+      color: #F0F0F0;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      line-height: 1.65;
+      color: #9E9CA0;
+      margin-bottom: 36px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 250ms ease;
+      cursor: pointer;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid #BEA1FE;
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: #7F32BA;
+      color: #F0F0F0;
+      border: none;
+    }
+
+    .btn-primary:hover { background: #40195D; }
+
+    .btn-secondary {
+      background: transparent;
+      color: #F0F0F0;
+      border: 1px solid #4A484B;
+    }
+
+    .btn-secondary:hover { background: #424144; }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #4A484B;
+      margin: 28px 0 20px;
+    }
+
+    .help-text {
+      font-size: 13px;
+      color: #9E9CA0;
+    }
+
+    .help-text a {
+      color: #BEA1FE;
+      text-decoration: underline;
+    }
+
+    .help-text a:hover { color: #974ED0; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #666468;
+    }
+
+    footer a {
+      color: #BEA1FE;
+      text-decoration: underline;
+    }
+
+    footer a:hover { color: #974ED0; }
+
+    @media (max-width: 520px) {
+      nav { padding: 0 24px; }
+      .card { padding: 36px 24px 28px; }
+      h1 { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">Loupedeck <span>Marketplace v5.9</span></a>
+  </nav>
+
+  <main>
+    <div class="card">
+
+      <div class="icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 8v13H3V8"/>
+          <path d="M1 3h22v5H1z"/>
+          <path d="M10 12h4"/>
+        </svg>
+      </div>
+
+      <h1>The v5.9 Marketplace is available as a static archive</h1>
+
+      <p class="subtitle">
+        Marketplace browsing for Loupedeck software v5.9 has moved to this static archive.
+        You can browse and download reviewed packages without signing in to a Loupedeck account.
+      </p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.3-4.3"/>
+          </svg>
+          Browse v5.9 packages
+        </a>
+
+        <a class="btn btn-secondary" href="../../notice.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5"/>
+            <path d="M12 19l-7-7 7-7"/>
+          </svg>
+          View legacy v5.8 notice
+        </a>
+      </div>
+
+      <hr class="divider" />
+
+      <p class="help-text">
+        Need help?
+        <a href="https://support.loupedeck.com/" target="_blank" rel="noopener noreferrer">Visit Loupedeck Support</a>
+      </p>
+
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Logitech. All rights reserved.
+    &middot; <a href="https://www.logitech.com/en-us/tos/terms.html" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+  </footer>
+
+</body>
+</html>
