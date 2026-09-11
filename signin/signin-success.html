@@ -21,8 +21,15 @@
         const loginDiv = document.getElementById("login-div");
         const loginText = document.getElementById("login-text");
         const loginIcon = document.getElementById("login-icon");
+        const companyLogo = document.getElementById("company-logo");
+        const pageTitle = document.getElementById("page-title");
         
-        if (supportedProviders.includes(provider)) {
+        if (service === "twitch") {
+          document.title = "Sign-in Successful";
+          companyLogo.hidden = true;
+          loginDiv.hidden = true;
+          pageTitle.innerText = "Twitch sign-in successful!";
+        } else if (supportedProviders.includes(provider)) {
           loginDiv.hidden = false;
           loginText.innerText = "You signed into Loupedeck via";
           loginIcon.src = "images/icons/" + provider + ".svg";
@@ -159,12 +166,13 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <img
+            id="company-logo"
             class="companyLogo"
             data-tenant-branding-logo="true"
             src="images/logo.svg"
             alt="Company Logo"
           />
-          <h1>Sign-in successful!</h1>
+          <h1 id="page-title">Sign-in successful!</h1>
           <p>You can close this window.</p>
           <p>
             <img
