@@ -23,18 +23,25 @@
         const loginIcon = document.getElementById("login-icon");
         const companyLogo = document.getElementById("company-logo");
         const pageTitle = document.getElementById("page-title");
+        const loginLabel = document.getElementById("login-label");
         
         if (service === "twitch") {
           document.title = "Sign-in Successful";
+          document.body.classList.add("neutral-success");
           companyLogo.hidden = true;
-          loginDiv.hidden = true;
+          loginDiv.hidden = false;
+          loginLabel.hidden = true;
+          loginIcon.src = "images/icons/twitch.svg";
+          loginIcon.alt = "Twitch";
           pageTitle.innerText = "Twitch sign-in successful!";
         } else if (supportedProviders.includes(provider)) {
           loginDiv.hidden = false;
+          loginLabel.hidden = false;
           loginText.innerText = "You signed into Loupedeck via";
           loginIcon.src = "images/icons/" + provider + ".svg";
         } else if (supportedServices.includes(service)) {
           loginDiv.hidden = false;
+          loginLabel.hidden = false;
           loginText.innerText = "You signed into";
           loginIcon.src = "images/icons/" + service + ".svg";
         } else {
@@ -118,6 +125,31 @@
         text-decoration: underline;
       }
 
+      body.neutral-success {
+        background-color: #101010;
+        background-image: none;
+        color: #c8c8c8;
+      }
+
+      body.neutral-success .container .panel {
+        background-color: #202020;
+        border: 1px solid #3a3a3a;
+      }
+
+      body.neutral-success h1,
+      body.neutral-success h2,
+      body.neutral-success h3,
+      body.neutral-success h4,
+      body.neutral-success h5,
+      body.neutral-success h6,
+      body.neutral-success p {
+        color: #f5f5f5;
+      }
+
+      body.neutral-success a {
+        color: #d8d8d8;
+      }
+
       ul,
       ol {
         padding-left: 0;
@@ -182,7 +214,7 @@
             />
           </p>
           <div id="login-div" hidden>
-            <p><span id="login-text"></span></p>
+            <p id="login-label"><span id="login-text"></span></p>
             <p>
               <img id="login-icon" class="icon" alt="sign-in icon" />
             </p>
