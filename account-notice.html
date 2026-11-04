@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="The Loupedeck Account website is no longer available. You no longer need to update your account details. For account problems, create a new account in Loupedeck Software." />
+    <title>Loupedeck Account Website Update</title>
+    <link rel="icon" href="signin/images/icons/favicon-150x150.png" sizes="32x32" />
+    <style>
+      @font-face {
+        font-family: Campton;
+        src: url("signin/fonts/book.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: Campton;
+        src: url("signin/fonts/bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: #1a1a1a url("signin/images/bg.png") center / cover fixed no-repeat;
+        color: #d7d5d9;
+        font-family: Campton, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+      }
+
+      main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        min-height: 100svh;
+        padding: 3rem 1.5rem;
+      }
+
+      .panel {
+        width: 36rem;
+        max-width: 100%;
+        padding: 3rem;
+        border: 1px solid #4a484b;
+        border-radius: 8px;
+        background: #29282a;
+        text-align: center;
+      }
+
+      .logo {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto 2rem;
+      }
+
+      .status-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.5rem;
+        height: 3.5rem;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        background: #40195d;
+      }
+
+      .status-icon svg {
+        width: 1.75rem;
+        height: 1.75rem;
+        fill: none;
+        stroke: #bea1fe;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+
+      h1 {
+        margin: 0 0 1rem;
+        color: #f0f0f0;
+        font-size: 1.5rem;
+        line-height: 1.35;
+      }
+
+      p { margin: 0 0 1.5rem; }
+
+      .next-step {
+        margin: 2rem 0;
+        padding: 1.5rem;
+        border: 1px solid #4a484b;
+        border-radius: 4px;
+        background: #333234;
+        text-align: left;
+      }
+
+      h2 {
+        margin: 0 0 0.75rem;
+        color: #f0f0f0;
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+
+      .next-step p { margin: 0; }
+
+      .download-label { font-size: 0.875rem; }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+      }
+
+      a { color: #bea1fe; }
+      a:hover { color: #f0f0f0; }
+      a:focus-visible { outline: 2px solid #bea1fe; outline-offset: 4px; }
+
+      .button {
+        flex: 1 1 12rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #4a484b;
+        border-radius: 4px;
+        color: #f0f0f0;
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .button:hover { background: #424144; }
+      .help { margin: 0; font-size: 0.875rem; }
+
+      @media (max-width: 520px) {
+        main { padding: 1.5rem 1rem; }
+        .panel { padding: 2rem 1.5rem; }
+        h1 { font-size: 1.25rem; }
+        .next-step { padding: 1.25rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel" aria-labelledby="account-notice-title">
+        <img class="logo" src="signin/images/logo.svg" alt="Loupedeck" />
+        <div class="status-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <h1 id="account-notice-title">The Loupedeck Account website is no longer available</h1>
+        <p>You no longer need to update your Loupedeck Account details.</p>
+
+        <div class="next-step">
+          <h2>Having trouble with your account?</h2>
+          <p>Open the Loupedeck Software desktop client and create a new account there.</p>
+        </div>
+
+        <p>You can close this page and return to Loupedeck Software.</p>
+        <p class="download-label">Need Loupedeck Software? Download it below.</p>
+        <div class="actions">
+          <a class="button" href="https://download.loupedeck.com/software/latest-win">Download for Windows</a>
+          <a class="button" href="https://download.loupedeck.com/software/latest-mac">Download for Mac</a>
+        </div>
+        <p class="help">Need more help? <a href="https://support.loupedeck.com/">Visit Loupedeck Support</a></p>
+      </section>
+    </main>
+  </body>
+</html>
