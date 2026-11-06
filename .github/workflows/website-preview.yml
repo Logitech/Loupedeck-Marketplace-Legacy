@@ -1,0 +1,34 @@
+name: Static website checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'website/**'
+      - 'tools/website/**'
+      - '.github/workflows/website-preview.yml'
+  push:
+    paths:
+      - 'website/**'
+      - 'tools/website/**'
+      - '.github/workflows/website-preview.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check local pages and assets
+        run: node tools/website/check-site.mjs
+      - name: Package the standalone site
+        uses: actions/upload-artifact@v4
+        with:
+          name: loupedeck-static-website
+          path: website/
+          if-no-files-found: error

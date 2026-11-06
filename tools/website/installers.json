@@ -1,0 +1,42 @@
+{
+  "checkedOn": "2026-11-06",
+  "sourcePage": "https://loupedeck.com/downloads/",
+  "installers": [
+    {
+      "version": "6.4.1",
+      "platform": "Windows",
+      "filename": "LoupedeckInstaller_6.4.1.364.exe",
+      "bytes": 224100592,
+      "sha256": "884167502ea854e14de35b39bac7c91c203eb502f08a8667a202297e501c4a15",
+      "url": "https://support.loupedeck.com/hubfs/Knowledge%20Base/LD%20Software%20Downloads/6.4.1/LoupedeckInstaller_6.4.1.364.exe",
+      "originalUrl": "https://loupedeck-support.devops.logitech.io/hubfs/Knowledge%20Base/LD%20Software%20Downloads/6.4.1/LoupedeckInstaller_6.4.1.364.exe"
+    },
+    {
+      "version": "6.4.1",
+      "platform": "macOS",
+      "filename": "LoupedeckInstaller_6.4.1.364.dmg",
+      "bytes": 302059099,
+      "sha256": "8d31e7b72e06b7cb03a5574793c35df04653b56212fdf02b9c2f6d23c61223a6",
+      "url": "https://support.loupedeck.com/hubfs/Knowledge%20Base/LD%20Software%20Downloads/6.4.1/LoupedeckInstaller_6.4.1.364.dmg",
+      "originalUrl": "https://loupedeck-support.devops.logitech.io/hubfs/Knowledge%20Base/LD%20Software%20Downloads/6.4.1/LoupedeckInstaller_6.4.1.364.dmg"
+    },
+    {
+      "version": "5.9.1",
+      "platform": "Windows",
+      "filename": "LoupedeckInstaller_5.9.1.19364.exe",
+      "bytes": 162500704,
+      "sha256": "59e2ff7c13d2b215bb76a44b75d390ae1759c18876e74150c9dc65c06ad6fc7f",
+      "url": "https://support.loupedeck.com/hubfs/Knowledge%20Base/LD%20Software%20Downloads/5.9.1/LoupedeckInstaller_5.9.1.19364.exe",
+      "originalUrl": "https://5145542.fs1.hubspotusercontent-na1.net/hubfs/5145542/Knowledge%20Base/LD%20Software%20Downloads/5.9.1/LoupedeckInstaller_5.9.1.19364.exe"
+    },
+    {
+      "version": "5.9.1",
+      "platform": "macOS",
+      "filename": "LoupedeckInstaller_5.9.1.19365.dmg",
+      "bytes": 251769789,
+      "sha256": "cf0357880332e537827b328716345b9c6dff0537a189f3181f6ff8565aef2db7",
+      "url": "https://support.loupedeck.com/hubfs/Knowledge%20Base/LD%20Software%20Downloads/5.9.1/LoupedeckInstaller_5.9.1.19365.dmg",
+      "originalUrl": "https://5145542.fs1.hubspotusercontent-na1.net/hubfs/5145542/Knowledge%20Base/LD%20Software%20Downloads/5.9.1/LoupedeckInstaller_5.9.1.19365.dmg"
+    }
+  ]
+}

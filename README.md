@@ -7,6 +7,12 @@ Static archive of the discontinued Loupedeck marketplace for software version 5.
 - **[signin/loupedeck-account-notice.html](signin/loupedeck-account-notice.html)** — Loupedeck Account retirement notice for sign-in surfaces. Points users to the static Legacy Marketplace.
 - **[account-notice.html](account-notice.html)** — Redirect target for the discontinued `account.loupedeck.com` account-management website. Explains that account details no longer need updating and directs users with account problems to create a new account in the Loupedeck Software desktop client.
 
+## Static main website
+
+**[website/](website/)** contains an English-only static replacement for `loupedeck.com`: Home, a historical product overview, and software downloads, with an external Support Center link. Its images and fonts are local, and it needs no build or backend. The marketplace archive remains at the repository root.
+
+Preview from the repository root with `python -m http.server 4173 --bind 127.0.0.1`, then open `http://127.0.0.1:4173/website/`. Run `node tools/website/check-site.mjs` to check local links, or add `--online` to check support and installer URLs too. The [website guide](tools/website/README.md) covers deployment, old-URL redirects and optional installer preservation in GitHub Releases. The website workflow checks and packages files without deploying them.
+
 ## Account website redirect and HTTPS
 
 After this page is published to GitHub Pages, its URL will be:
